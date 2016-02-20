@@ -1,5 +1,9 @@
 #include <iostream>
-#include "texobject.cpp"
+#include <cassert>
+#include "texobject.hpp"
+#include "texview.hpp"
+#include "reader.hpp"
+#include "stream.hpp"
 
 using Macro = std::function<TeXObject(std::vector<TeXObject>)>;
 
@@ -14,6 +18,10 @@ void show(TeXObject obj) {
   } else {
     std::cout << "\'" << obj.entity << "\'";
   }
+}
+
+TeXObject parse(char top, Stream &stream) {
+  return TeXObject(top);
 }
 
 int main() {
