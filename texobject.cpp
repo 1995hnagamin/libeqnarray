@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <tuple>
+#include <functional>
+#include <map>
 #include "reader.hpp"
 
 struct TeXObject {
@@ -38,6 +41,8 @@ void show(TeXObject obj) {
   }
 }
 
+using Macro = std::function<TeXObject(std::vector<TeXObject>)>;
+
 int main() {
   Reader<TeXObject> reader(parse);
   reader.add_read_macro('_',
@@ -57,6 +62,42 @@ int main() {
           objs.push_back(obj);
         }
         return TeXObject("group", objs);
+      });
+  std::map<std::string, std::tuple<size_t, Macro>> macros;
+  reader.add_read_macro('\\',
+      [&macros](Stream &stream, char backslash, const Reader<TeXObject> &reader) {
+        std::string name;
+        while (std::isalpha(stream.peek())) {
+          name.push_back(stream.read());
+        }
+        if (macros.find(name) == macros.end()) {
+          throw;
+        }
+        size_t arity;
+        Macro macro;
+        std::vector<TeXObject> args;
+        std::tie(arity, macro) = macros.at(name);
+        for (size_t i = 0; i < arity; ++i) {
+          TeXObject obj(reader.read(stream));
+          args.push_back(obj);
+        }
+        return macro(args);
+      });
+  macros["frac"] = std::make_tuple(2,
+      [](std::vector<TeXObject> objs) {
+        return TeXObject("frac", {objs[0], objs[1]});
+      });
+  macros["pi"] = std::make_tuple(0,
+      [](std::vector<TeXObject> objs) {
+        return TeXObject("π");
+      });
+  macros["int"] = std::make_tuple(0,
+      [](std::vector<TeXObject> objs) {
+        return TeXObject("∫");
+      });
+  macros["infty"] = std::make_tuple(0,
+      [](std::vector<TeXObject> objs) {
+        return TeXObject("∞");
       });
   std::string poe;
   getline(std::cin, poe);

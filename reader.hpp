@@ -6,6 +6,7 @@ class Stream {
   public:
     Stream(const std::string &str);
     char read();
+    char peek();
     void unread();
     bool eos();
   private:
@@ -23,6 +24,10 @@ char Stream::read() {
     return '\0';
   }
   return *(data++);
+}
+
+char Stream::peek() {
+  return eos() ? '\0' : *data;
 }
 
 void Stream::unread() {
