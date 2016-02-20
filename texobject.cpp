@@ -100,11 +100,13 @@ int main() {
         return TeXObject("∞");
       });
   std::string poe;
-  getline(std::cin, poe);
-  Stream stream(poe);
-  while (!stream.eos()) {
-    TeXObject obj(reader.read(stream));
-    show(obj);
-    std::cout << std::endl;
+  while (getline(std::cin, poe)) {
+    Stream stream(poe);
+    while (!stream.eos()) {
+      TeXObject obj(reader.read(stream));
+      show(obj);
+      std::cout << std::endl;
+    }
   }
+  return 0;
 }
