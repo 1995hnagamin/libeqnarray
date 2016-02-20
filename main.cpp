@@ -107,11 +107,12 @@ int main() {
   std::string poe;
   while (getline(std::cin, poe)) {
     Stream stream(poe);
+    std::vector<TeXObject> objs;
     while (!stream.eos()) {
       TeXObject obj(reader.read(stream));
-      StringBox sb(tv.convert(obj));
-      std::cout << sb.to_string() << std::endl;
+      objs.push_back(obj);
     }
+    std::cout << tv.convert(TeXObject( "group", objs )).to_string() << std::endl;
   }
   return 0;
 }
