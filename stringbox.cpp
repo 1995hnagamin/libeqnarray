@@ -19,7 +19,7 @@ StringBox::StringBox(const StringBox &fst, const StringBox &snd, Direction dir):
   second(new StringBox(snd))
 {}
 
-const std::string StringBox::to_string() {
+const std::string StringBox::to_string() const {
   if (connection == None) {
     return std::accumulate(std::begin(entity), std::end(entity), std::string{},
       [](const std::string &a, std::string b) {
@@ -36,7 +36,7 @@ const std::string StringBox::to_string() {
   return str;
 }
 
-const char StringBox::at(size_t i, size_t j) {
+const char StringBox::at(size_t i, size_t j) const {
   if (connection == None) {
     return entity[i][j];
   }
@@ -50,7 +50,7 @@ const char StringBox::at(size_t i, size_t j) {
     );
 }
 
-const std::string StringBox::row(size_t i) {
+const std::string StringBox::row(size_t i) const {
   if (connection == None) {
     return entity[i];
   }
@@ -61,15 +61,15 @@ const std::string StringBox::row(size_t i) {
   return first->row(i) + second->row(i);
 }
 
-const bool StringBox::empty() {
+const bool StringBox::empty() const {
   return entity.empty();
 }
 
-const size_t StringBox::width() {
+const size_t StringBox::width() const {
   return entity.empty()? 0:entity.front().length();
 }
 
-const size_t StringBox::height() {
+const size_t StringBox::height() const {
   return entity.size();
 }
 
