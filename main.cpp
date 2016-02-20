@@ -80,13 +80,24 @@ int main() {
       [](std::vector<TeXObject> objs) {
         return TeXObject("∞");
       });
+
+  TeXView tv;
+  tv.add_converter("frac",
+      [&tv](TeXObject obj) {
+        assert(obj.children.size() == 2);
+        StringBox numer(tv.convert(obj.children[0])),
+                  denom(tv.convert(obj.children[1]));
+        StringBox vinculum(std::max(numer.width(), denom.width()), 1, '-');
+        return v_amend(v_amend(numer, vinculum), denom);
+      });
+
   std::string poe;
   while (getline(std::cin, poe)) {
     Stream stream(poe);
     while (!stream.eos()) {
       TeXObject obj(reader.read(stream));
-      show(obj);
-      std::cout << std::endl;
+      StringBox sb(tv.convert(obj));
+      std::cout << "\"" << sb.to_string() << "\"";
     }
   }
   return 0;
