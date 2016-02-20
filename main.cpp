@@ -100,6 +100,9 @@ int main() {
         }
         return acc;
       });
+  tv.add_converter("pi", [](auto obj) { return StringBox("π"); });
+  tv.add_converter("int", [](auto obj) { return StringBox("∫"); });
+  tv.add_converter("infty", [](auto obj) { return StringBox("∞"); });
 
   std::string poe;
   while (getline(std::cin, poe)) {
