@@ -73,4 +73,37 @@ const size_t StringBox::height() const {
   return entity.size();
 }
 
+StringBox v_amend(const StringBox &upper, const StringBox &lower) {
+  size_t up_width(upper.width()), lw_width(lower.width());
+  StringBox up_half(
+      up_width >= lw_width ?
+        upper :
+        StringBox(upper,
+                  StringBox(lw_width - up_width, upper.height(), ' '),
+                  Horizontal));
+  StringBox lw_half(
+      lw_width >= up_width ?
+        lower :
+        StringBox(lower,
+                  StringBox(up_width - lw_width, lower.height(), ' '),
+                    Horizontal));
+  return StringBox(up_half, lw_half, Vertical);
+}
+
+StringBox h_amend(const StringBox &left, const StringBox &right) {
+  size_t l_height(left.height()), r_height(right.height());
+  StringBox l_half(
+      l_height >= r_height ?
+        left :
+        StringBox(left,
+                  StringBox(left.width(), r_height - l_height, ' '),
+                  Vertical));
+  StringBox r_half(
+      r_height >= l_height ?
+        right :
+        StringBox(right,
+                  StringBox(right.width(), l_height - r_height, ' '),
+                    Vertical));
+  return StringBox(l_half, r_half, Horizontal);
+}
 

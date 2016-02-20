@@ -24,3 +24,5 @@ class StringBox {
     std::shared_ptr<StringBox> second;
 };
 
+StringBox v_amend(const StringBox &upper, const StringBox &lower);
+StringBox h_amend(const StringBox &left, const StringBox &right);
