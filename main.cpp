@@ -88,7 +88,17 @@ int main() {
         StringBox numer(tv.convert(obj.children[0])),
                   denom(tv.convert(obj.children[1]));
         StringBox vinculum(std::max(numer.width(), denom.width()), 1, '-');
-        return v_amend(v_amend(numer, vinculum), denom);
+        StringBox fraction = v_amend(numer, vinculum);
+        fraction = v_amend(fraction, denom);
+        return fraction;
+      });
+  tv.add_converter("group",
+      [&tv](TeXObject objs) {
+        StringBox acc("");
+        for (TeXObject obj : objs.children) {
+          acc = h_amend(acc, tv.convert(obj));
+        }
+        return acc;
       });
 
   std::string poe;
@@ -97,7 +107,7 @@ int main() {
     while (!stream.eos()) {
       TeXObject obj(reader.read(stream));
       StringBox sb(tv.convert(obj));
-      std::cout << "\"" << sb.to_string() << "\"";
+      std::cout << sb.to_string() << std::endl;
     }
   }
   return 0;
