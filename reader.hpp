@@ -2,42 +2,7 @@
 #include <functional>
 #include <map>
 #include <memory>
-
-class Stream {
-  public:
-    Stream(const std::string &str);
-    char read();
-    char peek();
-    void unread();
-    bool eos();
-  private:
-    const char *data;
-    const char *end;
-};
-
-Stream::Stream(const std::string &str):
-  data(str.c_str()),
-  end(str.c_str() + str.length())
-{}
-
-char Stream::read() {
-  if (eos()) {
-    return '\0';
-  }
-  return *(data++);
-}
-
-char Stream::peek() {
-  return eos() ? '\0' : *data;
-}
-
-void Stream::unread() {
-  --data;
-}
-
-bool Stream::eos() {
-  return data >= end;
-}
+#include "stream.hpp"
 
 template<class T>
 class Reader {
