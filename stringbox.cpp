@@ -12,6 +12,13 @@ StringBox::StringBox(const std::string &str):
   second()
 {}
 
+StringBox::StringBox(size_t width, size_t height, char c):
+  connection(None),
+  entity(height, std::string(width, c)),
+  first(),
+  second()
+{}
+
 StringBox::StringBox(const StringBox &fst, const StringBox &snd, Direction dir):
   connection(dir),
   entity(),

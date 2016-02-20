@@ -10,6 +10,7 @@ const Direction Horizontal = 2;
 class StringBox {
   public:
     StringBox(const std::string &str);
+    StringBox(size_t width, size_t height, char c);
     StringBox(const StringBox &fst, const StringBox &snd, Direction dir);
     const std::string to_string() const;
     const char at(size_t i, size_t j) const;
