@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __READER_HPP_
+#define __READER_HPP_
+
 #include <functional>
 #include <map>
 #include <memory>
@@ -36,3 +38,5 @@ T Reader<T>::read(Stream &stream) const {
   }
   return parser(top, stream);
 }
+
+#endif // __READER_HPP_

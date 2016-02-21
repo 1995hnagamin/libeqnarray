@@ -10,21 +10,24 @@ StringBox::StringBox(const std::string &str):
   connection(None),
   entity(std::vector<std::string>(1, str)),
   first(),
-  second()
+  second(),
+  baseline(size_t(0))
 {}
 
 StringBox::StringBox(size_t width, size_t height, char c):
   connection(None),
   entity(height, std::string(width, c)),
   first(),
-  second()
+  second(),
+  baseline()
 {}
 
-StringBox::StringBox(const StringBox &fst, const StringBox &snd, Direction dir):
+StringBox::StringBox(const StringBox &fst, const StringBox &snd, Direction dir, Baseline base):
   connection(dir),
   entity(),
   first(new StringBox(fst)),
-  second(new StringBox(snd))
+  second(new StringBox(snd)),
+  baseline(base)
 {
   if (dir == Vertical) {
     assert(first->width() == second->width());
@@ -100,29 +103,47 @@ const size_t StringBox::height() const {
   return first->height();
 }
 
-StringBox v_amend(const StringBox &upper, const StringBox &lower) {
+Baseline StringBox::get_baseline() const {
+  return baseline;
+}
+
+void StringBox::set_baseline(size_t base) {
+  baseline = base;
+}
+
+StringBox v_amend(StringBox upper, StringBox lower) {
   size_t uw = upper.width(), lw = lower.width();
   if (lw < uw) {
-    StringBox lower_wide(lower, StringBox(uw - lw, lower.height(), ' '), Horizontal);
+    StringBox lower_wide(lower, StringBox(uw - lw, lower.height(), ' '), Horizontal, lower.get_baseline());
     return StringBox(upper, lower_wide, Vertical);
   }
   if (lw > uw) {
-    StringBox upper_wide(upper, StringBox(lw - uw, upper.height(), ' '), Horizontal);
+    StringBox upper_wide(upper, StringBox(lw - uw, upper.height(), ' '), Horizontal, upper.get_baseline());
     return StringBox(upper_wide, lower, Vertical);
   }
   return StringBox(upper, lower, Vertical);
 }
 
-StringBox h_amend(const StringBox &left, const StringBox &right) {
+StringBox h_amend(StringBox left, StringBox right) {
+  Baseline base(fmap<size_t>(std::max<size_t>, left.get_baseline(), right.get_baseline())),
+           lbase(left.get_baseline()),
+           rbase(right.get_baseline());
+  if (lbase && lbase < base) {
+    left = StringBox(StringBox(left.width(), *base - *lbase, ' '), left, Vertical);
+    left.set_baseline(*base);
+  }
+  if (rbase && rbase < base) {
+    right = StringBox(StringBox(right.width(), *base - *rbase, ' '), right, Vertical);
+    right.set_baseline(*base);
+  }
+
   size_t lh = left.height(), rh = right.height();
+
   if (lh < rh) {
-    StringBox left_wide(left, StringBox(left.width(), rh - lh, ' '), Vertical);
-    return StringBox(left_wide, right, Horizontal);
+    left = StringBox(left, StringBox(left.width(), rh - lh, ' '), Vertical, left.get_baseline());
+  } else if (lh > rh) {
+    right = StringBox(right, StringBox(right.width(), lh - rh, ' '), Vertical, right.get_baseline());
   }
-  if (lh > rh) {
-    StringBox right_wide(right, StringBox(right.width(), lh - rh, ' '), Vertical);
-    return StringBox(left, right_wide, Horizontal);
-  }
-  return StringBox(left, right, Horizontal);
+  return StringBox(left, right, Horizontal, base);
 }
 

@@ -90,6 +90,7 @@ int main() {
         StringBox vinculum(std::max(numer.width(), denom.width()), 1, '-');
         StringBox fraction = v_amend(numer, vinculum);
         fraction = v_amend(fraction, denom);
+        fraction.set_baseline(numer.get_baseline());
         return fraction;
       });
   tv.add_converter("group",
